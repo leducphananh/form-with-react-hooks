@@ -27,7 +27,7 @@ function UserForm(props) {
         description: '',
         courses: [],
     });
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState({})
 
     const handleCheckbox = (id) => {
         setUser(prevUser => {
@@ -40,14 +40,15 @@ function UserForm(props) {
         });
     }
 
-    const isValid = () => {
-        setErrors(Validate(user));
-        return Object.keys(errors).length > 0 ? false : true;
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!onSubmit || !isValid()) return;
+        if (!onSubmit) return;
+
+        const validate = Validate(user);
+        if (Object.values(validate).some(item => item)) {
+            setError(validate);
+            return;
+        }
 
         onSubmit(user);
 
@@ -68,6 +69,13 @@ function UserForm(props) {
     const handleUpdate = (e) => {
         e.preventDefault();
         if (!onUpdate) return;
+
+        const validate = Validate(user);
+        if (Object.values(validate).some(item => item)) {
+            setError(validate);
+            return;
+        }
+
         onUpdate(user);
 
         // Reset form
@@ -99,11 +107,21 @@ function UserForm(props) {
                     <label htmlFor="name" className="form-label label-required">Name</label>
                     <input
                         value={user.name}
-                        onChange={e => setUser({ ...user, name: e.target.value })}
+                        onChange={e => {
+                            setUser({ ...user, name: e.target.value });
+                            error.name = null;
+                        }}
+                        onBlur={() => {
+                            const obj = { name: user.name };
+                            setError({
+                                ...error,
+                                ...Validate(obj)
+                            });
+                        }}
                         placeholder="Enter name"
                         autoComplete="off"
                         className="form-control" />
-                    <span className="form-message"></span>
+                    <span className="form-message">{error.name}</span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="gender" className="form-label label-required">Gender</label>
@@ -134,39 +152,79 @@ function UserForm(props) {
                     <label htmlFor="dob" className="form-label label-required">Date of Birth</label>
                     <input
                         value={user.dob}
-                        onChange={e => setUser({ ...user, dob: e.target.value })}
+                        onChange={e => {
+                            setUser({ ...user, dob: e.target.value });
+                            error.dob = null;
+                        }}
+                        onBlur={() => {
+                            const obj = { dob: user.dob };
+                            setError({
+                                ...error,
+                                ...Validate(obj)
+                            });
+                        }}
                         type="date"
                         name="date"
                         className="form-control" />
-                    <span className="form-message"></span>
+                    <span className="form-message">{error.dob}</span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone" className="form-label label-required">Phone number</label>
                     <input
                         value={user.phone}
-                        onChange={e => setUser({ ...user, phone: e.target.value })}
+                        onChange={e => {
+                            setUser({ ...user, phone: e.target.value });
+                            error.phone = null;
+                        }}
+                        onBlur={() => {
+                            const obj = { phone: user.phone };
+                            setError({
+                                ...error,
+                                ...Validate(obj)
+                            });
+                        }}
                         name="phone"
                         placeholder="Enter phone number"
                         autoComplete="off"
                         className="form-control" />
-                    <span className="form-message"></span>
+                    <span className="form-message">{error.phone}</span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="email" className="form-label label-required">Email</label>
                     <input
                         value={user.email}
-                        onChange={e => setUser({ ...user, email: e.target.value })}
+                        onChange={e => {
+                            setUser({ ...user, email: e.target.value });
+                            error.email = null;
+                        }}
+                        onBlur={() => {
+                            const obj = { email: user.email };
+                            setError({
+                                ...error,
+                                ...Validate(obj)
+                            });
+                        }}
                         name="email"
                         placeholder="Enter email"
                         autoComplete="off"
                         className="form-control" />
-                    <span className="form-message"></span>
+                    <span className="form-message">{error.email}</span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="address" className="form-label label-required">Address</label>
                     <select
                         value={user.address}
-                        onChange={e => setUser({ ...user, address: e.target.value })}
+                        onChange={e => {
+                            setUser({ ...user, address: e.target.value });
+                            error.address = null;
+                        }}
+                        onBlur={() => {
+                            const obj = { address: user.address };
+                            setError({
+                                ...error,
+                                ...Validate(obj)
+                            });
+                        }}
                         className="form-control">
                         <option value="">-- Address --</option>
                         <option value="Hà Nội">Hà Nội</option>
@@ -175,7 +233,7 @@ function UserForm(props) {
                         <option value="Hà Nam">Hà Nam</option>
                         <option value="Hà Bắc">Hà Bắc</option>
                     </select>
-                    <span className="form-message"></span>
+                    <span className="form-message">{error.address}</span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="description" className="form-label">Description</label>
@@ -185,7 +243,6 @@ function UserForm(props) {
                         name="description"
                         rows="8">
                     </textarea>
-                    <span className="form-message"></span>
                 </div>
                 <div className="form-group">
                     <label htmlFor="level" className="form-label">Courses</label>

@@ -181,9 +181,6 @@ form > .desc {
   text-align: left;
   font-size: 12px;
   padding: 4px 0 0;
-}
-
-.form-group.invalid .form-message {
   color: var(--required-color);
 }
 
